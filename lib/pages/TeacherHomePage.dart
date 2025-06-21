@@ -2,18 +2,23 @@ import 'package:flutter/material.dart';
 import 'classes_page.dart';
 import 'attendance_page.dart';
 import 'contact_us_page.dart';
-import 'Grade_Veiw.dart';
+import 'Home_Grade_Veiw.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 class TeacherHomePage extends StatelessWidget {
+  final String teacherId;
+
+  const TeacherHomePage({super.key, required this.teacherId});
   @override
   Widget build(BuildContext context) {
     List<_HomeItem> items = [
-      _HomeItem("Classes", Icons.class_, Colors.blueAccent[100]!, () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => StudentsOfTeacherClassPage()));
+      _HomeItem("My Students", Icons.class_, Colors.blueAccent[100]!, () {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => StudentsOfTeacherClassPage(teacherId: teacherId)));
       }),
 
 
       _HomeItem("Attendance", Icons.event_available, Colors.blueAccent[100]!, () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => AttendancePage()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => AttendancePage(teacherId: teacherId)));
       }),
 
 
@@ -23,15 +28,27 @@ class TeacherHomePage extends StatelessWidget {
 
 
       _HomeItem(" Grades", Icons.grade_sharp, Colors.blueAccent[100]!, () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage()));
+        Navigator.push(context, MaterialPageRoute(builder: (_) => HomePage(teacherId: teacherId)));
       })
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text("Hello Teacher",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.white),) ,
-      backgroundColor: Colors.blueAccent,
-
+      appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
+        title: FutureBuilder<String?>(
+          future: fetchTeacherFullName(teacherId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Text("Loading...", style: TextStyle(color: Colors.white));
+            } else if (snapshot.hasData) {
+              return Text("Hello, ${snapshot.data!}", style: const TextStyle(fontSize: 22, color: Colors.white));
+            } else {
+              return const Text("Hello Teacher", style: TextStyle(fontSize: 22, color: Colors.white));
+            }
+          },
+        ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
@@ -76,4 +93,18 @@ class _HomeItem {
   final VoidCallback onTap;
 
   _HomeItem(this.title, this.icon, this.color, this.onTap);
+}
+
+Future<String?> fetchTeacherFullName(String teacherId) async {
+  final dbRef = FirebaseDatabase.instance.ref();
+  final snapshot = await dbRef.child('teachers/$teacherId').get();
+
+  if (snapshot.exists) {
+    final data = snapshot.value as Map<dynamic, dynamic>;
+    final firstName = data['first_name'];
+    final lastName = data['last_name'];
+    return '$firstName $lastName';
+  }else{
+  return null;
+  }
 }

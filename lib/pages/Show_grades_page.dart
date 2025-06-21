@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class SafeGradesListPage extends StatefulWidget {
-  const SafeGradesListPage({super.key});
+  final String teacherId;
+  const SafeGradesListPage({super.key, required this.teacherId});
 
   @override
   State<SafeGradesListPage> createState() => _SafeGradesListPageState();
 }
+
 
 class _SafeGradesListPageState extends State<SafeGradesListPage> {
   final database = FirebaseDatabase.instance.ref();
@@ -15,15 +17,48 @@ class _SafeGradesListPageState extends State<SafeGradesListPage> {
   Map<String, Map<String, dynamic>> studentsMap = {};
 
   String? selectedClass;
-  final List<String> classOptions = ['class-1', 'class-2', 'class-3'];
+  final List<String> classOptions = [];
 
+  @override
   @override
   void initState() {
     super.initState();
-
-    // selectedClass = classOptions.first;
-    // loadData(selectedClass!, 'Arabic');
+    fetchClasses();
+    fetchTeacherSubject();
   }
+  void fetchClasses() async {
+    final snapshot = await database.child('Classes').get();
+    if (snapshot.exists) {
+      final data = snapshot.value;
+      List<String> classes = [];
+
+      if (data is Map) {
+        classes = data.keys.map((key) => key.toString()).toList();
+      } else if (data is List) {
+        for (int i = 0; i < data.length; i++) {
+          if (data[i] != null) classes.add(i.toString());
+        }
+      }
+
+      setState(() {
+        classOptions.clear();
+        classOptions.addAll(classes);
+      });
+    }
+  }
+
+  String? subject;
+
+  void fetchTeacherSubject() async {
+    final snapshot = await database.child('teachers/${widget.teacherId}').get();
+    if (snapshot.exists) {
+      final data = snapshot.value as Map;
+      setState(() {
+        subject = data['specialization']?.toString();
+      });
+    }
+  }
+
 
   Future<void> loadData(String classId, String subjectId) async {
 
@@ -131,10 +166,11 @@ class _SafeGradesListPageState extends State<SafeGradesListPage> {
                   selectedClass = value;
                   grades = [];
                 });
-                if (value != null) {
-                  loadData(value, 'Arabic');
+                if (value != null && subject != null) {
+                  loadData(value, subject!);
                 }
               },
+
             ),
             const SizedBox(height: 20),
             Expanded(

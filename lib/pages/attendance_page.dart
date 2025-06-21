@@ -3,7 +3,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
 
 class AttendancePage extends StatefulWidget {
-  const AttendancePage({super.key});
+  final String teacherId;
+  const AttendancePage({super.key, required this.teacherId});
 
   @override
   State<AttendancePage> createState() => _AttendancePageState();
@@ -13,18 +14,16 @@ class _AttendancePageState extends State<AttendancePage> {
   String? selectedClass;
   Map<String, bool> attendanceStatus = {};
   List<Map<String, dynamic>> students = [];
-
   final database = FirebaseDatabase.instance.ref();
 
   @override
   void initState() {
     super.initState();
-    fetchClassForTeacher('1');
+    fetchClassForTeacher(widget.teacherId);
   }
 
   void fetchClassForTeacher(String teacherId) async {
     final snapshot = await database.child('Classes').get();
-
     if (snapshot.exists) {
       final data = snapshot.value;
       String? classId;
@@ -49,7 +48,7 @@ class _AttendancePageState extends State<AttendancePage> {
         setState(() {
           selectedClass = classId;
         });
-        fetchStudentsForClass(classId as String);
+        fetchStudentsForClass(classId!);
       } else {
         print("No class found for teacher with ID $teacherId");
       }

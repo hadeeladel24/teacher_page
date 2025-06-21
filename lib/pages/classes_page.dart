@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class StudentsOfTeacherClassPage extends StatefulWidget {
-  const StudentsOfTeacherClassPage({super.key});
+  final String teacherId;
+  const StudentsOfTeacherClassPage({required this.teacherId, super.key});
 
   @override
   State<StudentsOfTeacherClassPage> createState() => _StudentsOfTeacherClassPageState();
@@ -29,14 +30,14 @@ class _StudentsOfTeacherClassPageState extends State<StudentsOfTeacherClassPage>
 
         if (classData is Map) {
           classData.forEach((key, value) {
-            if (value is Map && value['teacher_id'] == 1) {
+            if (value is Map && value['teacher_id'].toString() == widget.teacherId) {
               foundClassId = key;
             }
           });
         } else if (classData is List) {
           for (int i = 0; i < classData.length; i++) {
             final value = classData[i];
-            if (value != null && value['teacher_id'] == 1) {
+            if (value != null && value['teacher_id'].toString() == widget.teacherId) {
               foundClassId = i.toString();
               break;
             }
@@ -81,7 +82,7 @@ class _StudentsOfTeacherClassPageState extends State<StudentsOfTeacherClassPage>
             });
           }
         } else {
-          print("No class found for teacher_id = 1");
+          print("No class found for teacher_id = ${widget.teacherId}");
         }
       }
     } catch (e) {

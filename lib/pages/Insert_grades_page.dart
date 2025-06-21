@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class InsertGradesPage extends StatefulWidget {
-  const InsertGradesPage({super.key});
+  final String teacherId;
+  const InsertGradesPage({super.key, required this.teacherId});
 
   @override
   State<InsertGradesPage> createState() => _InsertGradesPageState();
@@ -11,11 +12,11 @@ class InsertGradesPage extends StatefulWidget {
 class _InsertGradesPageState extends State<InsertGradesPage> {
   final database = FirebaseDatabase.instance.ref();
   String? selectedClass;
-  String? selectedSubject = 'Arabic';
+  String? selectedSubject ;
   List<Map<String, dynamic>> students = [];
   Map<String, TextEditingController> gradeControllers = {};
 
-  List<String> classOptions = ['class-1', 'class-2', 'class-3'];
+  List<String> classOptions =[];
 
   @override
   void dispose() {
@@ -85,6 +86,46 @@ class _InsertGradesPageState extends State<InsertGradesPage> {
       const SnackBar(content: Text("Grades saved successfully")),
     );
   }
+
+  void fetchClasses() async {
+    final snapshot = await database.child('Classes').get();
+    if (snapshot.exists) {
+      final data = snapshot.value;
+      List<String> classList = [];
+
+      if (data is Map) {
+        data.forEach((key, value) {
+          classList.add(key);
+        });
+      } else if (data is List) {
+        for (int i = 0; i < data.length; i++) {
+          if (data[i] != null) {
+            classList.add(i.toString());
+          }
+        }
+      }
+
+      setState(() {
+        classOptions = classList;
+      });
+    }
+  }
+  void fetchTeacherSpecialization() async {
+    final snapshot = await database.child('teachers/${widget.teacherId}').get();
+    if (snapshot.exists) {
+      final data = snapshot.value as Map;
+      setState(() {
+        selectedSubject = data['specialization']?.toString();
+      });
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    fetchClasses();
+    fetchTeacherSpecialization();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -162,3 +203,4 @@ class _InsertGradesPageState extends State<InsertGradesPage> {
     );
   }
 }
+

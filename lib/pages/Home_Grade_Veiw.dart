@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 
-import 'insert_grades_page.dart';
-import 'grades_page.dart';
+import 'Insert_grades_page.dart';
+import 'Show_grades_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String teacherId;
+  const HomePage({super.key, required this.teacherId});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
-
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final List<Widget> _pages = [];
 
-
-  final List<Widget> _pages = [
-    const InsertGradesPage(),
-    const SafeGradesListPage(),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _pages.addAll([
+      InsertGradesPage(teacherId: widget.teacherId),
+      SafeGradesListPage(teacherId: widget.teacherId),
+    ]);
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -28,10 +32,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_selectedIndex],  // الصفحة الحالية
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,  // تغيير الصفحة عند الضغط
+        onTap: _onItemTapped,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.edit),
@@ -46,3 +50,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
