@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "739507463106",
+    "firebase_url": "https://school-management-system-3405d-default-rtdb.firebaseio.com",
+    "project_id": "school-management-system-3405d",
+    "storage_bucket": "school-management-system-3405d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739507463106:android:fe682f3a252ac787956c5b",
+        "android_client_info": {
+          "package_name": "com.example.hadeelflutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIH2zligf9dVKl2txPFNN3eKtt4ZVXzeg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739507463106:android:9dc9e8067c151aa6956c5b",
+        "android_client_info": {
+          "package_name": "com.example.school_managment_system"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIH2zligf9dVKl2txPFNN3eKtt4ZVXzeg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
