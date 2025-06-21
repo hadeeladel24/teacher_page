@@ -6,14 +6,14 @@ import 'signUpTeacher.dart';
 import 'forgetPassTeacher.dart';
 
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginT extends StatefulWidget {
+  const LoginT({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginT> createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<LoginT> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
